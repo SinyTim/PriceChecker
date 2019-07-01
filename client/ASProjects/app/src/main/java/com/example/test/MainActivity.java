@@ -20,7 +20,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.StringTokenizer;
 
+
 public class MainActivity extends AppCompatActivity {
+
+    private static String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
 
     private EditText textAreaInputCode;
     private Button buttonFind;
@@ -29,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        textAreaInputCode = (EditText)findViewById(R.id.textAreaInputCode);
-        buttonFind = (Button)findViewById(R.id.buttonFind);
-        textViewShowInfo = (TextView)findViewById(R.id.textViewShowInfo);
+
+        textAreaInputCode = findViewById(R.id.textAreaInputCode);
+        buttonFind = findViewById(R.id.buttonFind);
+        textViewShowInfo = findViewById(R.id.textViewShowInfo);
+
         addListeners();
     }
 
@@ -40,12 +46,19 @@ public class MainActivity extends AppCompatActivity {
         buttonFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InfoSend infoSend = new InfoSend(Long.parseLong(textAreaInputCode.getText().toString()));
-                new HTTPAsyncTask().execute("http://sinytim.pythonanywhere.com/product", infoSend.JSONString());
+
+                String codeStr = textAreaInputCode.getText().toString();
+                long code = Long.parseLong(codeStr);
+                InfoSend infoSend = new InfoSend(code);
+                String infoStr = infoSend.JSONString();
+
+                HTTPAsyncTask task = new HTTPAsyncTask();
+                task.execute(SERVER_URL, infoStr);
             }
         });
     }
     private class HTTPAsyncTask extends AsyncTask<String, Void, String> {
+
         private ProgressDialog progressDialog;
 
         @Override
@@ -83,26 +96,33 @@ public class MainActivity extends AppCompatActivity {
             setPostRequestContent(connection, jsonString);
             connection.connect();
             InputStream stream = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            InputStreamReader streamReader = new InputStreamReader(stream);
+            BufferedReader reader = new BufferedReader(streamReader);
 
             String line;
             StringBuffer buffer = new StringBuffer();
+
             while ((line = reader.readLine()) != null) {
-                StringTokenizer st = new StringTokenizer(line, "{,}");
-                while (st.hasMoreTokens()){
-                    buffer.append(st.nextElement());
+
+                StringTokenizer tokenizer = new StringTokenizer(line, "{,}");
+
+                while (tokenizer.hasMoreTokens()){
+                    buffer.append(tokenizer.nextElement());
                     buffer.append("\n");
                 }
             }
+
             //String str = connection.getResponseMessage();
             //int code = connection.getResponseCode();
+
             return buffer.toString();
         }
 
         private void setPostRequestContent(HttpURLConnection conn, String jsonString) throws IOException {
 
             OutputStream outputStream = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+            OutputStreamWriter streamWriter = new OutputStreamWriter(outputStream, "UTF-8");
+            BufferedWriter writer = new BufferedWriter(streamWriter);
             writer.write(jsonString);
             //Log.i(MainActivity.class.toString(), jsonString);
             writer.flush();

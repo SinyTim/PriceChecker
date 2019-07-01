@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 
 public class InfoSend {
+
     private long code;
 
     public InfoSend(long code) {
