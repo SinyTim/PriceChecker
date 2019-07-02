@@ -18,8 +18,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.StringTokenizer;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,23 +97,10 @@ public class MainActivity extends AppCompatActivity {
             InputStreamReader streamReader = new InputStreamReader(stream);
             BufferedReader reader = new BufferedReader(streamReader);
 
-            String line;
-            StringBuffer buffer = new StringBuffer();
-
-            while ((line = reader.readLine()) != null) {
-
-                StringTokenizer tokenizer = new StringTokenizer(line, "{,}");
-
-                while (tokenizer.hasMoreTokens()){
-                    buffer.append(tokenizer.nextElement());
-                    buffer.append("\n");
-                }
-            }
-
+            InfoReceive infoReceive = new InfoReceive(reader.readLine());
+            return  infoReceive.toString();
             //String str = connection.getResponseMessage();
             //int code = connection.getResponseCode();
-
-            return buffer.toString();
         }
 
         private void setPostRequestContent(HttpURLConnection conn, String jsonString) throws IOException {
