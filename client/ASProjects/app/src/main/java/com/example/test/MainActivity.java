@@ -1,14 +1,14 @@
 package com.example.test;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,24 +21,30 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
-
+    private static final String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
     private EditText textAreaInputCode;
     private Button buttonFind;
+    private Button buttonScan;
     private TextView textViewShowInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         textAreaInputCode = findViewById(R.id.textAreaInputCode);
         buttonFind = findViewById(R.id.buttonFind);
+        buttonScan = findViewById(R.id.buttonScan);
         textViewShowInfo = findViewById(R.id.textViewShowInfo);
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String scanResult = extras.getString("ScanResult");
+            textAreaInputCode.setText(scanResult);
+        }
         addListeners();
     }
+
+
 
     private void addListeners(){
         buttonFind.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
 
                 HTTPAsyncTask task = new HTTPAsyncTask();
                 task.execute(SERVER_URL, infoStr);
+                //svBarcode.setVisibility(View.VISIBLE);
+                //scanQRCode(view);
+            }
+        });
+        buttonScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -99,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
             InfoReceive infoReceive = new InfoReceive(reader.readLine());
             return  infoReceive.toString();
-            //String str = connection.getResponseMessage();
             //int code = connection.getResponseCode();
         }
 
@@ -109,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             OutputStreamWriter streamWriter = new OutputStreamWriter(outputStream, "UTF-8");
             BufferedWriter writer = new BufferedWriter(streamWriter);
             writer.write(jsonString);
-            //Log.i(MainActivity.class.toString(), jsonString);
             writer.flush();
             writer.close();
             outputStream.close();

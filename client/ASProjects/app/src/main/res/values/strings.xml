@@ -2,5 +2,7 @@
     <string name="app_name">test</string>
     <string name="inputCode">введите код товара</string>
     <string name="find">Найти!</string>
+    <string name="scan">Сканировать!</string>
+
 
 </resources>
