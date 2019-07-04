@@ -2,8 +2,10 @@ package com.example.test;
 
 import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
+
 public class InfoReceive {
-    private long id;
+    private String id;
     private String name;
     private float price;
 
@@ -17,6 +19,7 @@ public class InfoReceive {
 
     @Override
     public String toString() {
-        return "ID: " + this.id + "\nName: " + this.name + "\nPrice: " + this.price;
+        return "ID: " + this.id + "\nНазвание товара: " + this.name +
+                "\nЦена: " + new DecimalFormat("#0.00").format(this.price);
     }
 }

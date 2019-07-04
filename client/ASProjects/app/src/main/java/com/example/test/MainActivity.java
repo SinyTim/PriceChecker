@@ -1,13 +1,17 @@
 package com.example.test;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
     private static final int REQUEST_SCAN_CODE = 1234;
     private static final String SCAN_RESULT = "SCAN_RESULT";
-    private EditText textAreaInputCode;
-    private Button buttonFind;
     private Button buttonScan;
     private TextView textViewShowInfo;
 
@@ -34,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textAreaInputCode = findViewById(R.id.textAreaInputCode);
-        buttonFind = findViewById(R.id.buttonFind);
         buttonScan = findViewById(R.id.buttonScan);
         textViewShowInfo = findViewById(R.id.textViewShowInfo);
 
@@ -43,25 +43,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addListeners(){
-        buttonFind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                String codeStr = textAreaInputCode.getText().toString();
-                long code = Long.parseLong(codeStr);
-                InfoSend infoSend = new InfoSend(code);
-                String infoStr = infoSend.JSONString();
-
-                HTTPAsyncTask task = new HTTPAsyncTask();
-                task.execute(SERVER_URL, infoStr);
-            }
-        });
         buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intentScan = new Intent(MainActivity.this, ScannerActivity.class);
-                startActivityForResult(intentScan, REQUEST_SCAN_CODE);
+                if(hasConnection(MainActivity.this)) {
+                    Intent intentScan = new Intent(MainActivity.this, ScannerActivity.class);
+                    startActivityForResult(intentScan, REQUEST_SCAN_CODE);
+                }else {
+                    Toast.makeText(MainActivity.this, "Нет подключения к интернету", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -71,7 +63,11 @@ public class MainActivity extends AppCompatActivity {
         if (data == null) {return;}
         if(requestCode == REQUEST_SCAN_CODE && resultCode == RESULT_OK) {
             String scanResult = data.getStringExtra(SCAN_RESULT);
-            textAreaInputCode.setText(scanResult);
+            InfoSend infoSend = new InfoSend(scanResult);
+            String infoStr = infoSend.JSONString();
+
+            HTTPAsyncTask task = new HTTPAsyncTask();
+            task.execute(SERVER_URL, infoStr, scanResult);
         }
     }
 
@@ -85,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 return HttpPost(urls[0], urls[1]);
             } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
+                return "Товар " + urls[2] + " не найден";
+                //return "Unable to retrieve web page. URL may be invalid.";
             }
         }
 
@@ -135,6 +132,24 @@ public class MainActivity extends AppCompatActivity {
             writer.close();
             outputStream.close();
         }
+    }
+
+    public static boolean hasConnection(final Context context)
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = connectivityManager.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        return false;
     }
 
 

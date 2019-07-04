@@ -5,9 +5,9 @@ import com.google.gson.Gson;
 
 public class InfoSend {
 
-    private long code;
+    private String code;
 
-    public InfoSend(long code) {
+    public InfoSend(String code) {
         this.code = code;
     }
 
