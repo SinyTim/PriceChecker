@@ -22,6 +22,8 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private static final String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
+    private static final int REQUEST_SCAN_CODE = 1234;
+    private static final String SCAN_RESULT = "SCAN_RESULT";
     private EditText textAreaInputCode;
     private Button buttonFind;
     private Button buttonScan;
@@ -36,15 +38,9 @@ public class MainActivity extends AppCompatActivity {
         buttonFind = findViewById(R.id.buttonFind);
         buttonScan = findViewById(R.id.buttonScan);
         textViewShowInfo = findViewById(R.id.textViewShowInfo);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String scanResult = extras.getString("ScanResult");
-            textAreaInputCode.setText(scanResult);
-        }
+
         addListeners();
     }
-
-
 
     private void addListeners(){
         buttonFind.setOnClickListener(new View.OnClickListener() {
@@ -58,19 +54,28 @@ public class MainActivity extends AppCompatActivity {
 
                 HTTPAsyncTask task = new HTTPAsyncTask();
                 task.execute(SERVER_URL, infoStr);
-                //svBarcode.setVisibility(View.VISIBLE);
-                //scanQRCode(view);
             }
         });
         buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
-                startActivity(intent);
+                Intent intentScan = new Intent(MainActivity.this, ScannerActivity.class);
+                startActivityForResult(intentScan, REQUEST_SCAN_CODE);
             }
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {return;}
+        if(requestCode == REQUEST_SCAN_CODE && resultCode == RESULT_OK) {
+            String scanResult = data.getStringExtra(SCAN_RESULT);
+            textAreaInputCode.setText(scanResult);
+        }
+    }
+
+
     private class HTTPAsyncTask extends AsyncTask<String, Void, String> {
 
         private ProgressDialog progressDialog;
@@ -107,13 +112,15 @@ public class MainActivity extends AppCompatActivity {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
             setPostRequestContent(connection, jsonString);
             connection.connect();
+
             InputStream stream = connection.getInputStream();
             InputStreamReader streamReader = new InputStreamReader(stream);
             BufferedReader reader = new BufferedReader(streamReader);
-
             InfoReceive infoReceive = new InfoReceive(reader.readLine());
+
             return  infoReceive.toString();
             //int code = connection.getResponseCode();
         }
