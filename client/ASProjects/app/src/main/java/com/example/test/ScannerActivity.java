@@ -37,7 +37,7 @@ public class ScannerActivity extends AppCompatActivity {
 
         surfaceViewBarcode = findViewById(R.id.surfaceBarcodeScanner);
         detector = new BarcodeDetector.Builder(this).
-                setBarcodeFormats(Barcode.EAN_13).build();
+                setBarcodeFormats(Barcode.EAN_13 | Barcode.EAN_8).build();
         cameraSource = new CameraSource.Builder(getApplicationContext(), detector).
                 setRequestedPreviewSize(1024,768).setRequestedFps(25f).
                 setAutoFocusEnabled(true).build();
