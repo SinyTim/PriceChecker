@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Price Checker</string>
     <string name="scan">Сканировать!</string>
+    <string name="totalSum">Итоговая сумма: </string>
+    <string name="productName">Наименование: </string>
+    <string name="price">Цена: </string>
+    <string name="amount">Колличество: </string>
+
+
 </resources>

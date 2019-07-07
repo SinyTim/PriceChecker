@@ -22,4 +22,12 @@ public class InfoReceive {
         return "ID: " + this.id + "\nНазвание товара: " + this.name +
                 "\nЦена: " + new DecimalFormat("#0.00").format(this.price);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getPrice() {
+        return price;
+    }
 }
