@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,12 +31,11 @@ import java.text.DecimalFormat;
 
 public class ProductInfoActivity extends AppCompatActivity {
 
-
-    private static final String SCAN_RESULT = "SCAN_RESULT";
     private static final String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
 
     private TextView textViewProductName;
     private TextView textViewPrice;
+    private LinearLayout layoutFragment;
     private Button buttonCancel;
     private Spinner spinnerNumberProducts;
     private String barcode;
@@ -44,20 +43,21 @@ public class ProductInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
+        ClassesRef.productInfoActivity = this;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         setContentView(R.layout.activity_product_info);
+
         textViewProductName = findViewById(R.id.textViewProductName);
         textViewPrice = findViewById(R.id.textViewPrice);
         spinnerNumberProducts = findViewById(R.id.spinnerNumberProducts);
+        layoutFragment = findViewById(R.id.layoutFragment);
         buttonCancel = findViewById(R.id.buttonCancel);
-        barcode = getIntent().getExtras().getString(SCAN_RESULT);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new Integer[]{1,2,3,4,5,6,7,8,9,10});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerNumberProducts.setAdapter(adapter);
 
         addListeners();
-        fillForm();
     }
 
     @Override
@@ -66,21 +66,51 @@ public class ProductInfoActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
     }
 
+    @Override
+    public void onBackPressed() {
+
+        clearFields();
+        if(layoutFragment.getVisibility() == View.VISIBLE){
+            ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
+            ClassesRef.mainActivity.restartDetector();
+        }else {
+            this.finish();
+            ClassesRef.mainActivity.finish();
+        }
+    }
+
     private void addListeners() {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ProductInfoActivity.this.finish();
+                clearFields();
+                ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
+                ClassesRef.mainActivity.restartDetector();
             }
         });
     }
 
-    private void fillForm(){
-        InfoSend infoSend = new InfoSend(barcode);
-        String infoStr = infoSend.JSONString();
+    private void clearFields(){
+        this.barcode = null;
+        this.spinnerNumberProducts.setSelection(0);
+        this.textViewProductName.setText("");
+        this.textViewPrice.setText("");
+    }
 
-        HTTPAsyncTask task = new HTTPAsyncTask();
-        task.execute(SERVER_URL, infoStr, barcode);
+    public void fillForm(String barcode){
+        this.barcode = barcode;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                InfoSend infoSend = new InfoSend(ProductInfoActivity.this.barcode);
+                String infoStr = infoSend.JSONString();
+
+                HTTPAsyncTask task = new HTTPAsyncTask();
+                task.execute(SERVER_URL, infoStr, ProductInfoActivity.this.barcode);
+            }
+        });
+
     }
     private class HTTPAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -110,6 +140,7 @@ public class ProductInfoActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
             if(result != null) {
+                ProductInfoActivity.this.layoutFragment.setVisibility(View.VISIBLE);
                 InfoReceive infoReceive = new InfoReceive(result);
                 textViewPrice.setText(new DecimalFormat("#0.00").format(infoReceive.getPrice()));
                 textViewProductName.setText(infoReceive.getName());
@@ -122,7 +153,8 @@ public class ProductInfoActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
-                                        ProductInfoActivity.this.finish();
+                                        ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
+                                        ClassesRef.mainActivity.restartDetector();
                                     }
                                 });
                 AlertDialog alert = builder.create();

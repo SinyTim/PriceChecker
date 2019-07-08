@@ -23,10 +23,9 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 100;
-    private static final String SCAN_RESULT = "SCAN_RESULT";
     private SurfaceView surfaceViewBarcode;
     private BarcodeDetector detector;
     private CameraSource cameraSource;
@@ -35,8 +34,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ClassesRef.mainActivity = this;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(MainActivity.this, ProductInfoActivity.class);
+        startActivity(intent);
 
         surfaceViewBarcode = findViewById(R.id.surfaceBarcodeScanner);
         detector = new BarcodeDetector.Builder(this).
@@ -50,15 +53,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        detector.setProcessor(makeDetectorProcessor());
+        restartDetector();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ClassesRef.mainActivity = null;
         detector.release();
         cameraSource.stop();
         cameraSource.release();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
     }
 
     @SuppressLint("MissingPermission")
@@ -78,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    protected void restartDetector(){
+        detector.release();
+        detector.setProcessor(makeDetectorProcessor());
+    }
+
     private Detector.Processor<Barcode> makeDetectorProcessor(){
         return new Detector.Processor<Barcode>(){
             @Override
@@ -87,14 +102,20 @@ public class MainActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if(barcodes != null && barcodes.size() > 0){
-
                     detector.release();
+
                     ToneGenerator toneNotification = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
                     toneNotification.startTone(ToneGenerator.TONE_PROP_BEEP, 150);
+
                     scanResult = barcodes.valueAt(0).displayValue;
-                    Intent intent = new Intent(MainActivity.this, ProductInfoActivity.class);
-                    intent.putExtra(SCAN_RESULT, scanResult);
-                    startActivity(intent);
+                    while (ClassesRef.productInfoActivity == null){
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ClassesRef.productInfoActivity.fillForm(scanResult);
                 }
             }
         };

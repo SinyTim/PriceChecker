@@ -4,7 +4,7 @@
     <string name="totalSum">Итоговая сумма: </string>
     <string name="productName">Наименование: </string>
     <string name="price">Цена: </string>
-    <string name="amount">Колличество: </string>
+    <string name="amount">Количество: </string>
 
 
 </resources>
