@@ -6,8 +6,8 @@ import java.text.DecimalFormat;
 
 public class InfoReceive {
     private String id;
-    private String name;
-    private float price;
+    protected String name;
+    protected float price;
 
     public InfoReceive(String JSONString){
         Gson gson = new Gson();
@@ -15,6 +15,12 @@ public class InfoReceive {
         this.id = tmp.id;
         this.name = tmp.name;
         this.price = tmp.price;
+    }
+
+    public InfoReceive(String id, String name, float price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
     }
 
     @Override

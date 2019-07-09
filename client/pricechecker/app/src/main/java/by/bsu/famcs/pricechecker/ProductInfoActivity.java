@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,6 +38,7 @@ public class ProductInfoActivity extends AppCompatActivity {
     private TextView textViewPrice;
     private LinearLayout layoutFragment;
     private Button buttonCancel;
+    private Button buttonBurger;
     private Spinner spinnerNumberProducts;
     private String barcode;
 
@@ -52,6 +54,7 @@ public class ProductInfoActivity extends AppCompatActivity {
         textViewPrice = findViewById(R.id.textViewPrice);
         spinnerNumberProducts = findViewById(R.id.spinnerNumberProducts);
         layoutFragment = findViewById(R.id.layoutFragment);
+        buttonBurger = findViewById(R.id.buttonBurger);
         buttonCancel = findViewById(R.id.buttonCancel);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new Integer[]{1,2,3,4,5,6,7,8,9,10});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -86,6 +89,13 @@ public class ProductInfoActivity extends AppCompatActivity {
                 clearFields();
                 ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
                 ClassesRef.mainActivity.restartDetector();
+            }
+        });
+        buttonBurger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProductInfoActivity.this, BasketActivity.class);
+                startActivity(intent);
             }
         });
     }
