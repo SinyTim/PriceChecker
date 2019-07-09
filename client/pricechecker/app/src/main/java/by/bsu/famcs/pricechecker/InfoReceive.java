@@ -1,7 +1,6 @@
 package by.bsu.famcs.pricechecker;
 
 import com.google.gson.Gson;
-
 import java.text.DecimalFormat;
 
 public class InfoReceive {

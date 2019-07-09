@@ -8,36 +8,34 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
-import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private List<ProductInfoData> values;
+    private Basket basket;
     @NonNull
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.basket_element, parent,false));
     }
 
-    public RecyclerViewAdapter(List<ProductInfoData> values) {
-        this.values = values;
+    public RecyclerViewAdapter(Basket basket) {
+        this.basket = basket;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewAdapter.ViewHolder holder, final int position) {
-        holder.textViewListItemName.setText(values.get(position).getName());
-        holder.spinnerListItemAmount.setSelection(values.get(position).getAmount()-1);
+        holder.textViewListItemName.setText(basket.get(position).getName());
+        holder.spinnerListItemAmount.setSelection(basket.get(position).getAmount()-1);
         holder.buttonListItemCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                values.remove(position);
+                basket.remove(position);
                 notifyItemRemoved(position);
-                notifyItemRangeChanged(position, values.size());
+                notifyItemRangeChanged(position, basket.size());
                 ClassesRef.basket.notifySums();
             }
         });
@@ -45,8 +43,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 holder.textViewListItemTotalSum.setText(
-                        new DecimalFormat("#0.00").format(values.get(position).getPrice() * (selectedItemPosition + 1)));
-                values.get(position).setAmount(selectedItemPosition + 1);
+                        new DecimalFormat("#0.00").format(basket.get(position).getPrice() * (selectedItemPosition + 1)));
+                basket.get(position).setAmount(selectedItemPosition + 1);
                 ClassesRef.basket.notifySums();
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -57,7 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return values.size();
+        return basket.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

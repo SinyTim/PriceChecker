@@ -27,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".BasketActivity"></activity>
+        <activity android:name=".StartProgramActivity" android:theme="@style/AppTheme.BlackStatusBar"></activity>
+        <activity android:name=".BasketActivity" android:theme="@style/AppTheme.BlackStatusBar"/>
         <activity
             android:name=".ProductInfoActivity"
             android:theme="@style/Theme.AppCompat.Translucent" />

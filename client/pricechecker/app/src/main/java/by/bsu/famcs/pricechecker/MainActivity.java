@@ -12,7 +12,6 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ClassesRef.mainActivity = this;
-        ClassesRef.basket = new Basket();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
@@ -49,6 +47,9 @@ public class MainActivity extends AppCompatActivity{
                 setRequestedPreviewSize(1024,768).setRequestedFps(25f).
                 setAutoFocusEnabled(true).build();
         surfaceViewBarcode.getHolder().addCallback(makeSurfaceViewCallback2());
+
+        intent = new Intent(MainActivity.this, StartProgramActivity.class);
+        startActivity(intent);
     }
 
     @Override

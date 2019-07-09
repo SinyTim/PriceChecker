@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +26,9 @@ public class BasketActivity extends AppCompatActivity {
         recyclerViewBasket = findViewById(R.id.recyclerViewBasket);
         textViewBasketTotalSum = findViewById(R.id.textViewBasketTotalSum);
         buttonBasketBurger = findViewById(R.id.buttonBasketBurger);
+
         recyclerViewBasket.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(ClassesRef.basket.getListProducts());
+        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(ClassesRef.basket);
         recyclerViewBasket.setAdapter(recyclerViewAdapter);
 
         buttonBasketBurger.setOnClickListener(new View.OnClickListener() {

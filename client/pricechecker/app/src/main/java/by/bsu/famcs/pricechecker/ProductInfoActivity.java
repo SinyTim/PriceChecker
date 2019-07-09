@@ -16,9 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -61,11 +59,13 @@ public class ProductInfoActivity extends AppCompatActivity {
         buttonBurger = findViewById(R.id.buttonBurger);
         buttonCancel = findViewById(R.id.buttonCancel);
         buttonAdd = findViewById(R.id.buttonAdd);
+
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new Integer[]{1,2,3,4,5,6,7,8,9,10});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerNumberProducts.setAdapter(adapter);
 
         addListeners();
+        ClassesRef.basket.notifySums();
     }
 
     @Override
@@ -82,8 +82,25 @@ public class ProductInfoActivity extends AppCompatActivity {
             ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
             ClassesRef.mainActivity.restartDetector();
         }else {
-            this.finish();
-            ClassesRef.mainActivity.finish();
+            AlertDialog.Builder builder = new AlertDialog.Builder(ProductInfoActivity.this);
+            builder.setTitle("Закрыть приложение")
+                    .setMessage("Вы уверены, что хотите закрыть приложение")
+                    .setCancelable(false)
+                    .setPositiveButton("Да",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            ProductInfoActivity.this.finish();
+                            ClassesRef.mainActivity.finish();
+                        }
+                    })
+                    .setNegativeButton("Нет",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
