@@ -2,31 +2,44 @@ package by.bsu.famcs.pricechecker;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class BasketActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewBasket;
+    private Button buttonBasketBurger;
+    private TextView textViewBasketTotalSum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_basket);
+        ClassesRef.basketActivity = this;
 
         recyclerViewBasket = findViewById(R.id.recyclerViewBasket);
+        textViewBasketTotalSum = findViewById(R.id.textViewBasketTotalSum);
+        buttonBasketBurger = findViewById(R.id.buttonBasketBurger);
         recyclerViewBasket.setLayoutManager(new LinearLayoutManager(this));
-        List<ProductInfoData> list = new ArrayList<>();
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(list);
+        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(ClassesRef.basket.getListProducts());
         recyclerViewBasket.setAdapter(recyclerViewAdapter);
-        list.add(new ProductInfoData("123456789", "lalala", 12.24f, 2));
-        //list.add("LALALA");
-        recyclerViewAdapter.notifyItemInserted(list.size()-1);
+
+        buttonBasketBurger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    public void changeTotalSum(String newSum){
+        textViewBasketTotalSum.setText(newSum);
     }
 }

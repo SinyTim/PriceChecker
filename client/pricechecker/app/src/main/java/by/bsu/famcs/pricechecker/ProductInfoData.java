@@ -13,7 +13,7 @@ public class ProductInfoData extends InfoReceive {
         return amount;
     }
 
-    public ProductInfoData(String JSONString) {
-        super(JSONString);
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

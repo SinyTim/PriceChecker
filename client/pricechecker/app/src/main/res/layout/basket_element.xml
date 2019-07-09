@@ -54,6 +54,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:popupBackground="@color/black"
+            android:backgroundTint="@color/white"
             android:textColor="@color/white" />
 
         <LinearLayout

@@ -33,12 +33,15 @@ import java.text.DecimalFormat;
 public class ProductInfoActivity extends AppCompatActivity {
 
     private static final String SERVER_URL = "http://sinytim.pythonanywhere.com/product";
+    private InfoReceive infoReceive;
 
     private TextView textViewProductName;
+    private TextView textViewTotalSum;
     private TextView textViewPrice;
     private LinearLayout layoutFragment;
     private Button buttonCancel;
     private Button buttonBurger;
+    private Button buttonAdd;
     private Spinner spinnerNumberProducts;
     private String barcode;
 
@@ -53,9 +56,11 @@ public class ProductInfoActivity extends AppCompatActivity {
         textViewProductName = findViewById(R.id.textViewProductName);
         textViewPrice = findViewById(R.id.textViewPrice);
         spinnerNumberProducts = findViewById(R.id.spinnerNumberProducts);
+        textViewTotalSum = findViewById(R.id.textViewTotalSum);
         layoutFragment = findViewById(R.id.layoutFragment);
         buttonBurger = findViewById(R.id.buttonBurger);
         buttonCancel = findViewById(R.id.buttonCancel);
+        buttonAdd = findViewById(R.id.buttonAdd);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new Integer[]{1,2,3,4,5,6,7,8,9,10});
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerNumberProducts.setAdapter(adapter);
@@ -82,6 +87,10 @@ public class ProductInfoActivity extends AppCompatActivity {
         }
     }
 
+    public void changeTotalSum(String newSum){
+        textViewTotalSum.setText(newSum);
+    }
+
     private void addListeners() {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +105,17 @@ public class ProductInfoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ProductInfoActivity.this, BasketActivity.class);
                 startActivity(intent);
+            }
+        });
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClassesRef.basket.addProduct(new ProductInfoData(barcode, infoReceive.name,
+                        infoReceive.price, spinnerNumberProducts.getSelectedItemPosition()+1));
+                clearFields();
+                ProductInfoActivity.this.layoutFragment.setVisibility(View.INVISIBLE);
+                ClassesRef.basket.notifySums();
+                ClassesRef.mainActivity.restartDetector();
             }
         });
     }
@@ -151,7 +171,7 @@ public class ProductInfoActivity extends AppCompatActivity {
             }
             if(result != null) {
                 ProductInfoActivity.this.layoutFragment.setVisibility(View.VISIBLE);
-                InfoReceive infoReceive = new InfoReceive(result);
+                infoReceive = new InfoReceive(result);
                 textViewPrice.setText(new DecimalFormat("#0.00").format(infoReceive.getPrice()));
                 textViewProductName.setText(infoReceive.getName());
             }else {

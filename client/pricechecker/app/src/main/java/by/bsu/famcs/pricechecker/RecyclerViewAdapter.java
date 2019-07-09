@@ -3,6 +3,7 @@ package by.bsu.famcs.pricechecker;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -27,10 +29,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerViewAdapter.ViewHolder holder, final int position) {
         holder.textViewListItemName.setText(values.get(position).getName());
-        holder.spinnerListItemAmount.setSelection(values.get(position).getAmount());
-        holder.textViewListItemTotalSum.setText(String.valueOf(values.get(position).getPrice() * values.get(position).getAmount()));
+        holder.spinnerListItemAmount.setSelection(values.get(position).getAmount()-1);
+        holder.buttonListItemCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                values.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, values.size());
+                ClassesRef.basket.notifySums();
+            }
+        });
+        holder.spinnerListItemAmount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+                holder.textViewListItemTotalSum.setText(
+                        new DecimalFormat("#0.00").format(values.get(position).getPrice() * (selectedItemPosition + 1)));
+                values.get(position).setAmount(selectedItemPosition + 1);
+                ClassesRef.basket.notifySums();
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
     }
 
     @Override
