@@ -65,7 +65,11 @@ public class ProductInfoActivity extends AppCompatActivity {
         spinnerNumberProducts.setAdapter(adapter);
 
         addListeners();
-        ClassesRef.basket.notifySums();
+        if(ClassesRef.basket != null) {
+            ClassesRef.basket.notifySums();
+        }else{
+            finish();
+        }
     }
 
     @Override

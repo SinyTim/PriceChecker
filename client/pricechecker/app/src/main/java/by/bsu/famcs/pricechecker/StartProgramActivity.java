@@ -52,5 +52,20 @@ public class StartProgramActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(ClassesRef.mainActivity != null){
+            ClassesRef.mainActivity.finish();
+        }
+        if(ClassesRef.productInfoActivity != null){
+            ClassesRef.productInfoActivity.finish();
+        }
+        if(ClassesRef.basketActivity != null){
+            ClassesRef.basketActivity.finish();
+        }
     }
 }
