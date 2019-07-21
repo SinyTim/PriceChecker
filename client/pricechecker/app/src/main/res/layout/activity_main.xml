@@ -4,39 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/buttonScan"
-        android:layout_width="271dp"
-        android:layout_height="62dp"
-        android:layout_marginStart="73dp"
-        android:layout_marginLeft="73dp"
-        android:layout_marginEnd="67dp"
-        android:layout_marginRight="67dp"
-        android:layout_marginBottom="88dp"
-        android:background="@color/buttonBackgroundColor"
-        android:text="@string/scan"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+    <!--<fragment
+        android:id="@+id/fragment"
+        android:name="by.bsu.famcs.pricechecker.BasketInfo"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        tools:layout="@layout/fragment_basket_info" />-->
 
-    <TextView
-        android:id="@+id/textViewShowInfo"
-        android:textSize="20sp"
-        android:layout_width="277dp"
-        android:layout_height="176dp"
-        android:layout_marginStart="67dp"
-        android:layout_marginLeft="67dp"
-        android:layout_marginTop="93dp"
-        android:layout_marginEnd="67dp"
-        android:layout_marginRight="67dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <SurfaceView
+        android:id="@+id/surfaceBarcodeScanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
