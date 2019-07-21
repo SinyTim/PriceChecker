@@ -7,9 +7,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+<<<<<<< Updated upstream
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+=======
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+>>>>>>> Stashed changes
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< Updated upstream
+=======
+        Log.i("Main Activity", "onCreate");
+        ClassesRef.mainActivity = this;
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+>>>>>>> Stashed changes
         setContentView(R.layout.activity_main);
 
         buttonScan = findViewById(R.id.buttonScan);
@@ -42,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         addListeners();
     }
 
+<<<<<<< Updated upstream
     private void addListeners(){
 
         buttonScan.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +97,69 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 return "Товар " + urls[2] + " не найден";
                 //return "Unable to retrieve web page. URL may be invalid.";
+=======
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("Main Activity", "onResume");
+        restartDetector();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("Main Activity", "onDestroy");
+        ClassesRef.mainActivity = null;
+        detector.release();
+        cameraSource.stop();
+        cameraSource.release();
+    }
+
+    @Override
+    public void finish() {
+        Log.i("Main Activity", "finish");
+        super.finish();
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("Main Activity", "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("Main Activity", "onStop");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("Main Activity", "onPause");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("Main Activity", "onRestart");
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_CODE_CAMERA_PERMISSION){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                try {
+                    cameraSource.start(surfaceViewBarcode.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                Toast.makeText(this, "Scanner won't work without permission", Toast.LENGTH_LONG).show();
+>>>>>>> Stashed changes
             }
         }
 
