@@ -1,0 +1,13 @@
+http://sinytim.pythonanywhere.com/
+
+/product   POST
+{"product_id":"str", "store_id":int, "user_id":int}
+return {"id":str, "name":str, "price":float}
+
+/products/update   POST
+[{"id":str, "store_id":int, "name":str, "price":float}, -//-, -//-, ...]
+return ["changed"/"added"/"there is no store #{}", -//-, -//-, ...]
+
+/products/delete   POST
+[{"id":str, "store_id":int}, -//-, -//-, ...]
+return [True/False, -//-, -//-, ...]

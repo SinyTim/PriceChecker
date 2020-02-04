@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+<head></head>
+<body>
+  <table>
+    <thead>
+      <tr><th>Id</th><th>Name</th><th>Price</th><th>Store</th></tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.store_id }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
